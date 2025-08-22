@@ -1,0 +1,16 @@
+from gpiozero import PWMOutputDevice
+import time
+
+# Connect ESC signal wire to GPIO 26
+MOTOR_PIN = 26
+
+# Set up PWM at 50Hz (common ESC frequency)
+motor = PWMOutputDevice(MOTOR_PIN, frequency=50)
+
+# Spin motor at medium speed (adjust between 0 and 1)
+motor.value = 0.07  # Example: 7% duty cycle, safe for many ESCs
+
+time.sleep(5)       # Run motor for 5 seconds
+
+# Stop motor
+motor.value = 0
