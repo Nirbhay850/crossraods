@@ -1,0 +1,34 @@
+import RPi.GPIO as GPIO
+from time import sleep
+
+ESC_PIN = 18
+
+GPIO.setmode(GPIO.BCM)
+GPIO.setup(ESC_PIN, GPIO.OUT)
+
+pwm = GPIO.PWM(ESC_PIN, 50)  # 50Hz
+pwm.start(0)
+
+def set_pulsewidth(pulse):
+    duty = (pulse / 20000) * 100
+    pwm.ChangeDutyCycle(duty)
+
+try:
+    print("Arming ESC at minimum throttle...")
+    set_pulsewidth(1000)   # Min throttle
+    sleep(3)
+
+    print("Motor test: spin up...")
+    set_pulsewidth(1200)   # Slow spin
+    sleep(3)
+
+    set_pulsewidth(1400)   # Faster
+    sleep(3)
+
+    print("Stopping motor...")
+    set_pulsewidth(1000)
+    sleep(2)
+
+finally:
+    pwm.stop()
+    GPIO.cleanup()
