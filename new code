@@ -1,0 +1,49 @@
+from gpiozero import Servo
+from time import sleep
+import sys
+import termios
+import tty
+
+esc_left = Servo(17)   # GPIO17
+esc_right = Servo(18)  # GPIO18
+
+def pulse_to_value(microseconds):
+    # Map 1000-2000 µs to -1 to 1
+    return (microseconds - 1500) / 500.0
+
+esc_left.value = pulse_to_value(1500)
+esc_right.value = pulse_to_value(1500)
+sleep(2)
+
+def get_key():
+    fd = sys.stdin.fileno()
+    old_settings = termios.tcgetattr(fd)
+    try:
+        tty.setraw(sys.stdin.fileno())
+        ch = sys.stdin.read(1)
+    finally:
+        termios.tcsetattr(fd, termios.TCSADRAIN, old_settings)
+    return ch
+
+print("Controls: F=Forward, B=Backward, L=Left, R=Right, S=Stop, Q=Quit")
+
+while True:
+    key = get_key().upper()
+
+    if key == 'F':
+        esc_left.value = pulse_to_value(1600)
+        esc_right.value = pulse_to_value(1600)
+    elif key == 'B':
+        esc_left.value = pulse_to_value(1400)
+        esc_right.value = pulse_to_value(1400)
+    elif key == 'L':
+        esc_left.value = pulse_to_value(1400)
+        esc_right.value = pulse_to_value(1600)
+    elif key == 'R':
+        esc_left.value = pulse_to_value(1600)
+        esc_right.value = pulse_to_value(1400)
+    elif key == 'S':
+        esc_left.value = pulse_to_value(1500)
+        esc_right.value = pulse_to_value(1500)
+    elif key == 'Q':
+        break
