@@ -1,0 +1,35 @@
+import pigpio
+from time import sleep
+
+# Connect ESC signal wire to GPIO18 (pin 12)
+ESC_GPIO = 18  
+
+pi = pigpio.pi()
+if not pi.connected:
+    exit()
+
+# Set frequency to 50Hz for ESC
+pi.set_servo_pulsewidth(ESC_GPIO, 0)
+
+print("Arming ESC...")
+pi.set_servo_pulsewidth(ESC_GPIO, 1500)  # Neutral signal
+sleep(2)
+
+print("Testing motor...")
+# Increase speed
+pi.set_servo_pulsewidth(ESC_GPIO, 1600)
+sleep(2)
+
+# Back to stop
+pi.set_servo_pulsewidth(ESC_GPIO, 1500)
+sleep(2)
+
+# Decrease (reverse for bidirectional ESCs, otherwise motor just stops)
+pi.set_servo_pulsewidth(ESC_GPIO, 1400)
+sleep(2)
+
+# Stop signal
+print("Stopping motor")
+pi.set_servo_pulsewidth(ESC_GPIO, 0)
+
+pi.stop()
