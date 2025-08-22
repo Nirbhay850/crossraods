@@ -1,0 +1,37 @@
+import RPi.GPIO as GPIO
+from time import sleep
+
+# Use BCM pin numbering
+ESC_PIN = 18   # Connect ESC signal wire here (physical pin 12)
+
+# Setup
+GPIO.setmode(GPIO.BCM)
+GPIO.setup(ESC_PIN, GPIO.OUT)
+
+# Create PWM object at 50Hz (20ms period for ESCs)
+pwm = GPIO.PWM(ESC_PIN, 50)
+pwm.start(0)
+
+def set_pulsewidth(pulse):
+    # pulse = pulse width in microseconds (1000–2000)
+    duty = (pulse / 20000) * 100  # Convert µs to duty cycle
+    pwm.ChangeDutyCycle(duty)
+
+try:
+    print("Arming ESC...")
+    set_pulsewidth(1500)   # Neutral signal
+    sleep(2)
+
+    print("Motor forward...")
+    set_pulsewidth(1600)   # Spin motor
+    sleep(2)
+
+    print("Stop motor...")
+    set_pulsewidth(1500)   # Neutral
+    sleep(2)
+
+    print("Test complete")
+
+finally:
+    pwm.stop()
+    GPIO.cleanup()
