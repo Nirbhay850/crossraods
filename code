@@ -1,0 +1,44 @@
+#include <Servo.h>
+
+Servo escLeft;
+Servo escRight;
+
+char command;
+
+void setup() {
+  Serial.begin(9600);
+  escLeft.attach(9);
+  escRight.attach(10);
+
+  
+  escLeft.writeMicroseconds(1500);
+  escRight.writeMicroseconds(1500);
+  delay(2000); // wait for ESCs to arm
+}
+
+void loop() {
+  if (Serial.available()) {
+    command = Serial.read();
+
+    if (command == 'F') {      
+      escLeft.writeMicroseconds(1600);
+      escRight.writeMicroseconds(1600);
+    }
+    else if (command == 'B') {     
+      escLeft.writeMicroseconds(1400);
+      escRight.writeMicroseconds(1400);
+    }
+    else if (command == 'L') {     
+      escLeft.writeMicroseconds(1400);
+      escRight.writeMicroseconds(1600);
+    }
+    else if (command == 'R') {     
+      escLeft.writeMicroseconds(1600);
+      escRight.writeMicroseconds(1400);
+    }
+    else if (command == 'S') {     
+      escLeft.writeMicroseconds(1500);
+      escRight.writeMicroseconds(1500);
+    }
+  }
+}
